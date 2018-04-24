@@ -3,6 +3,8 @@ package ru.javaops.masterjava.matrix;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
+import java.util.stream.IntStream;
 
 public class MatrixUtil {
     public static int[][] create(int size) {
@@ -39,10 +41,26 @@ public class MatrixUtil {
         return matrixC;
     }
 
-    public static int[][] concurrentMultiply(int[][] matrixA, int[][] matrixB, ExecutorService executor) throws InterruptedException, ExecutionException {
+    public static int[][] concurrentMultiplyStreams(int[][] matrixA, int[][] matrixB, int threadNumber)
+            throws InterruptedException, ExecutionException {
         final int matrixSize = matrixA.length;
         final int[][] matrixC = new int[matrixSize][matrixSize];
+        new ForkJoinPool(threadNumber).submit(
+                () -> IntStream.range(0, matrixSize)
+                .parallel()
+                .forEach(row -> {
+                    final int[] rowA = matrixA[row];
+                    final int[] rowC = matrixC[row];
 
+                    for(int idx = 0; idx < matrixSize; idx++){
+                        final int elA = rowA[idx];
+                        final int[] rowB = matrixB[idx];
+                        for(int col = 0; col < matrixSize; col++){
+                            rowC[col] += elA * rowB[col];
+                        }
+                    }
+
+                })).get();
         return matrixC;
     }
 
