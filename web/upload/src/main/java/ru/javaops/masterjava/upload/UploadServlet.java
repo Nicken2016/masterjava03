@@ -1,7 +1,7 @@
 package ru.javaops.masterjava.upload;
 
 import org.thymeleaf.context.WebContext;
-import ru.javaops.masterjava.model.User;
+import ru.javaops.masterjava.persist.model.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
