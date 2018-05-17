@@ -1,6 +1,8 @@
 package ru.javaops.masterjava.upload;
 
 
+import ru.javaops.masterjava.persist.DBIProvider;
+import ru.javaops.masterjava.persist.dao.UserDao;
 import ru.javaops.masterjava.persist.model.User;
 import ru.javaops.masterjava.persist.model.UserFlag;
 import ru.javaops.masterjava.xml.schema.ObjectFactory;
@@ -17,8 +19,9 @@ import java.util.List;
 
 public class UserProcessor {
     public static final JaxbParser jaxbParser = new JaxbParser(ObjectFactory.class);
+    private static UserDao userDao = DBIProvider.getDao(UserDao.class);
 
-    public List<User> process(final InputStream is) throws XMLStreamException, JAXBException {
+    public List<User> process(final InputStream is, int chunkSize) throws XMLStreamException, JAXBException {
         final StaxStreamProcessor processor = new StaxStreamProcessor(is);
         List<User> users = new ArrayList<>();
 
@@ -28,6 +31,7 @@ public class UserProcessor {
             final User user = new User(xmlUser.getValue(), xmlUser.getEmail(), UserFlag.valueOf(xmlUser.getFlag().value()));
             users.add(user);
         }
+        userDao.insertBatch(users, chunkSize);
         return users;
     }
 }
