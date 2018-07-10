@@ -5,6 +5,7 @@ import lombok.val;
 import ru.javaops.masterjava.persist.DBIProvider;
 import ru.javaops.masterjava.persist.dao.UserDao;
 import ru.javaops.masterjava.persist.model.City;
+import ru.javaops.masterjava.persist.model.Group;
 import ru.javaops.masterjava.persist.model.User;
 import ru.javaops.masterjava.persist.model.type.UserFlag;
 import ru.javaops.masterjava.xml.schema.ObjectFactory;
@@ -23,11 +24,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
+import static ru.javaops.masterjava.upload.PayloadProcessor.jaxbParser;
+
 @Slf4j
 public class UserProcessor {
     private static final int NUMBER_THREADS = 4;
 
-    private static final JaxbParser jaxbParser = new JaxbParser(ObjectFactory.class);
+    //    private static final JaxbParser jaxbParser = new JaxbParser(ObjectFactory.class);
     private static UserDao userDao = DBIProvider.getDao(UserDao.class);
 
     private ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_THREADS);
@@ -35,7 +38,8 @@ public class UserProcessor {
     /*
      * return failed users chunks
      */
-    public List<FailedEmails> process(final StaxStreamProcessor processor, Map<String, City> cities, int chunkSize) throws XMLStreamException, JAXBException {
+
+    public List<FailedEmails> process(final StaxStreamProcessor processor, Map<String, Group> groups, Map<String, City> cities, int chunkSize) throws XMLStreamException, JAXBException {
         log.info("Start processing with chunkSize=" + chunkSize);
 
         Map<String, Future<List<String>>> chunkFutures = new LinkedHashMap<>(); // ordered map (emailRange -> chunk future)
