@@ -2,9 +2,9 @@ package ru.javaops.masterjava.persist.dao;
 
 import com.bertoncelj.jdbi.entitymapper.EntityMapperFactory;
 import one.util.streamex.IntStreamEx;
+import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapperFactory;
-import org.skife.jdbi.v2.sqlobject.*;
 import ru.javaops.masterjava.persist.DBIProvider;
 import ru.javaops.masterjava.persist.model.User;
 
@@ -43,23 +43,23 @@ public abstract class UserDao implements AbstractDao {
     @SqlQuery("SELECT * FROM users ORDER BY full_name, email LIMIT :it")
     public abstract List<User> getWithLimit(@Bind int limit);
 
-
     //   http://stackoverflow.com/questions/13223820/postgresql-delete-all-content
     @SqlUpdate("TRUNCATE users CASCADE")
     @Override
-    public void clean() {
-    }
+    public abstract void clean();
 
     //    https://habrahabr.ru/post/264281/
     @SqlBatch("INSERT INTO users (id, full_name, email, flag, city_ref) VALUES (:id, :fullName, :email, CAST(:flag AS USER_FLAG), :cityRef)" +
             "ON CONFLICT DO NOTHING")
+//            "ON CONFLICT (email) DO UPDATE SET full_name=:fullName, flag=CAST(:flag AS USER_FLAG)")
     public abstract int[] insertBatch(@BindBean List<User> users, @BatchChunkSize int chunkSize);
 
-    public List<String> insertAndGetConflictEmails(List<User> users) {
+
+    public List<User> insertAndGetConflictEmails(List<User> users) {
         int[] result = insertBatch(users, users.size());
         return IntStreamEx.range(0, users.size())
                 .filter(i -> result[i] == 0)
-                .mapToObj(index -> users.get(index).getEmail())
+                .mapToObj(users::get)
                 .toList();
     }
 }
