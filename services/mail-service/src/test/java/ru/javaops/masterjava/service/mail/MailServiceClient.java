@@ -13,11 +13,10 @@ public class MailServiceClient {
 
         Service service = Service.create(
                 new URL("http://localhost:8080/mail/mailService?wsdl"),
-                new QName("http://mail.service.masterjava.javaops.ru/", "MailServiceImplService"));
+                new QName("http://mail.javaops.ru/", "MailServiceImplService"));
 
         MailService mailService = service.getPort(MailService.class);
         mailService.sendMail(ImmutableList.of(
-                new Addressee("nick-n71@mail.ru", null),
-                new Addressee("Bad Email <bad_email.ru>")), null, "Subject", "Body");
+                new Addressee("nick-n71@mail.ru", null)), null, "Subject", "Body");
     }
 }
