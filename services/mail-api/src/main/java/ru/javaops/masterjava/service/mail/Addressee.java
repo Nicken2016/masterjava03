@@ -1,13 +1,11 @@
 package ru.javaops.masterjava.service.mail;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "email")
 public class Addressee {
     private @NonNull String email;
     private String name;
@@ -25,6 +23,6 @@ public class Addressee {
 
     @Override
     public String toString() {
-        return name == null ? email : name + "<" + email + '>';
+        return name == null ? email : name + " <" + email + '>';
     }
 }
