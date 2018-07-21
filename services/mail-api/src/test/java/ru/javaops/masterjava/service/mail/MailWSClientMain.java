@@ -1,7 +1,7 @@
 package ru.javaops.masterjava.service.mail;
 
 import com.google.common.collect.ImmutableSet;
-import ru.javaops.web.WebStateException;
+import ru.javaops.masterjava.web.WebStateException;
 
 public class MailWSClientMain {
     public static void main(String[] args) throws WebStateException {
